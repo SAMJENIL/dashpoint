@@ -180,7 +180,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-09-22 18:48:59.709711",
+ "modified": "2026-09-23 11:20:01.452834",
  "modified_by": "Administrator",
  "module": "Dashpoint",
  "name": "Delivery Order",
@@ -201,22 +201,14 @@
   },
   {
    "create": 1,
-   "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
-   "report": 1,
    "role": "DP Dispatch Staff",
-   "share": 1,
    "write": 1
   },
   {
-   "email": 1,
-   "export": 1,
    "read": 1,
-   "report": 1,
    "role": "DP Rider",
-   "share": 1,
    "submit": 1,
    "write": 1
   },
@@ -225,13 +217,8 @@
    "cancel": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
    "role": "DP Ops Manager",
-   "share": 1,
    "submit": 1,
    "write": 1
   }

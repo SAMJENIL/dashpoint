@@ -5,6 +5,10 @@ app_description = "Courier Dispatch Management System"
 app_email = "francissam2005@gmail.com"
 app_license = "mit"
 
+permission_query_conditions = {
+    "Delivery Order": "dashpoint.dashpoint.permissions.delivery_order_query",
+}
+
 # Apps
 # ------------------
 
@@ -138,13 +142,13 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "*": {
+        "on_update": "dashpoint.dashpoint.api.log_change",
+        "on_submit": "dashpoint.dashpoint.api.log_change",
+        "on_cancel": "dashpoint.dashpoint.api.log_change",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
@@ -158,8 +162,7 @@ app_license = "mit"
 # 	],
 # 	"hourly": [
 # 		"dashpoint.tasks.hourly"
-# 	],
-# 	"weekly": [
+# 	],# 	"weekly": [
 # 		"dashpoint.tasks.weekly"
 # 	],
 # 	"monthly": [
@@ -254,5 +257,18 @@ app_license = "mit"
 # Translation
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
-# ignore_translatable_strings_from = []
+# ignore_translatable_strings_from = [] 
+
+fixtures = [
+    {
+        "dt": "Role",
+        "filters": [
+            ["name", "in", [
+                "DP Dispatch Staff",
+                "DP Rider",
+                "DP Ops Manager"
+            ]]
+        ]
+    }
+]
 
