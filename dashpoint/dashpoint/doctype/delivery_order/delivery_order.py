@@ -11,7 +11,6 @@ class DeliveryOrder(Document):
 
     def validate(self):
 
-        # Customer phone must contain exactly 10 digits
         if not re.fullmatch(r"\d{10}", self.customer_phone or ""):
             frappe.throw(
                 "Customer phone must contain exactly 10 digits."
@@ -34,13 +33,11 @@ class DeliveryOrder(Document):
                 f"Assigned Rider is required when status is '{self.status}'."
             )
 
-        
         if self.status == "Delivery Failed" and not self.failure_reason:
             frappe.throw(
                 "Failure Reason is required for a failed delivery."
             )
 
-        
         self.packaging_total = 0
 
         for row in self.packaging_used:
@@ -51,14 +48,12 @@ class DeliveryOrder(Document):
 
             self.packaging_total += row.total_price
 
-        
         if self.delivery_fee is None:
             self.delivery_fee = frappe.db.get_single_value(
                 "Dispatch Settings",
                 "default_delivery_fee"
             )
 
-        
         self.final_amount = (
             (self.packaging_total or 0)
             + (self.delivery_fee or 0)
@@ -66,13 +61,11 @@ class DeliveryOrder(Document):
 
     def before_submit(self):
 
-        
         if self.status != "Delivered":
             frappe.throw(
                 "Delivery Order can be submitted only when status is Delivered."
             )
 
-        
         for row in self.packaging_used:
 
             stock_qty = frappe.db.get_value(
@@ -89,7 +82,6 @@ class DeliveryOrder(Document):
 
     def on_submit(self):
 
-    
         for row in self.packaging_used:
 
             current_stock = frappe.db.get_value(
@@ -106,7 +98,6 @@ class DeliveryOrder(Document):
                 update_modified=False,
             )
 
-        
         receipt = frappe.get_doc({
             "doctype": "Delivery Receipt",
             "delivery_order": self.name,
@@ -122,7 +113,6 @@ class DeliveryOrder(Document):
 
         receipt.insert(ignore_permissions=True)
 
-        
         frappe.enqueue(
             "dashpoint.dashpoint.api.send_delivery_confirmation",
             delivery_order=self.name,
@@ -130,9 +120,14 @@ class DeliveryOrder(Document):
         )
 
     @frappe.whitelist()
-    def record_delivery_attempt(self, outcome):
+    def record_delivery_attempt(self, outcome, failure_reason=None):
 
         if outcome == "Failed":
+
+            if not failure_reason:
+                frappe.throw("Failure Reason is required.")
+
+            self.failure_reason = failure_reason
 
             self.delivery_attempts_count = (
                 self.delivery_attempts_count or 0
@@ -160,22 +155,19 @@ class DeliveryOrder(Document):
 
         self.save()
 
-        
         frappe.publish_realtime(
             "delivery_status_changed",
             {
                 "delivery_order": self.name,
-                "status": self.status,
+                "status": self.status
             },
             user=self.owner,
         )
 
     def on_cancel(self):
 
-        
         self.status = "Cancelled"
 
-        
         for row in self.packaging_used:
 
             current_stock = frappe.db.get_value(
@@ -192,14 +184,12 @@ class DeliveryOrder(Document):
                 update_modified=False,
             )
 
-        
         receipt_name = frappe.db.get_value(
             "Delivery Receipt",
             {"delivery_order": self.name},
             "name"
         )
 
-        
         if receipt_name:
 
             receipt = frappe.get_doc(
@@ -209,10 +199,10 @@ class DeliveryOrder(Document):
 
             if receipt.docstatus == 1:
                 receipt.cancel()
-                
+
     def on_trash(self):
 
         if self.status not in ["Draft", "Cancelled"]:
-          frappe.throw(
-            "Delivery Order can only be deleted when status is Draft or Cancelled."
-        )
+            frappe.throw(
+                "Delivery Order can only be deleted when status is Draft or Cancelled."
+            )

@@ -51,3 +51,9 @@ merge=True combines the old document into an existing document with the new name
 ###E3 
 
 I will use frappe.db.get_value because i need only specific field and its lightweight. frappe.get_doc is heavier and retrieves the entire document.
+
+### H1
+
+frappe.call() is asynchronous, so its response is not immediate. Therefore, it should not be relied on inside validate() for synchronous validation. Use onload, refresh, or field-change handlers and process the response in the callback.
+
+In DashPoint, assigned_rider uses frappe.call() to check the rider's zone against the delivery zone.

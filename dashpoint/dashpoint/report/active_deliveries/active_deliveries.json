@@ -1,0 +1,51 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2026-09-24 15:14:16.944498",
+ "disable_prepared_report_automation": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "doctype_to_sync": [],
+ "filters": [
+  {
+   "fieldname": "delivery_zone",
+   "fieldtype": "Link",
+   "label": "Delivery Zone",
+   "mandatory": 0,
+    "options": "Delivery Zone",
+    "default": null,
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": null,
+ "modified": "2026-09-24 16:10:44.693686",
+ "modified_by": "Administrator",
+ "module": "Dashpoint",
+ "name": "Active Deliveries",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "SELECT\r\n    name,\r\n    customer_name,\r\n    delivery_zone,\r\n    status,\r\n    assigned_rider,\r\n    delivery_attempts_count,\r\n    creation\r\nFROM `tabDelivery Order`\r\nWHERE status NOT IN (\"Delivered\", \"Cancelled\")\r\n  AND (\r\n      %(delivery_zone)s IS NULL\r\n      OR %(delivery_zone)s = \"\"\r\n      OR delivery_zone = %(delivery_zone)s\r\n  )\r\nORDER BY creation DESC",
+ "ref_doctype": "Delivery Order",
+ "report_name": "Active Deliveries",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "DP Dispatch Staff"
+  },
+  {
+   "role": "DP Rider"
+  },
+  {
+   "role": "DP Ops Manager"
+  }
+ ],
+ "snapshot_report": 0,
+ "timeout": 0
+}
