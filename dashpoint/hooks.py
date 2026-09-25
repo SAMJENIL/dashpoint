@@ -81,10 +81,12 @@ permission_query_conditions = {
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "dashpoint.utils.jinja_methods",
-# 	"filters": "dashpoint.utils.jinja_filters"
-# }
+jinja = {
+    "methods": [
+        "dashpoint.dashpoint.api.get_dispatch_center_name",
+        "dashpoint.dashpoint.api.format_value"
+    ]
+}
 
 # Installation
 # ------------
@@ -168,6 +170,11 @@ doc_events = {
 # 	"monthly": [
 # 		"dashpoint.tasks.monthly"
 # 	],
+scheduler_events = {
+    "daily": [
+        "dashpoint.tasks.check_stuck_reattempts"
+    ]
+}
 # }
 
 # Testing

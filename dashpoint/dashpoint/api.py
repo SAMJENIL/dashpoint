@@ -143,4 +143,38 @@ def log_change(doc, method=None):
         "action": method or "unknown",
         "user": frappe.session.user,
         "timestamp": frappe.utils.now_datetime(),
-    }).insert(ignore_permissions=True)
+    }).insert(ignore_permissions=True) 
+
+def get_dispatch_center_name():
+    return frappe.db.get_single_value(
+        "Dispatch Settings",
+        "dispatch_center_name"
+    ) or "DashPoint Delivery Services"
+
+def format_value(value, fieldtype):
+    return frappe.format_value(
+        value,
+        {"fieldtype": fieldtype}
+    )
+def get_delivery_status():
+    delivery_order_name = frappe.form_dict.get("delivery_order_name")
+
+    if not delivery_order_name:
+        frappe.local.response.http_status_code = 404
+        return {"error": "Not found"}
+
+    if not frappe.db.exists("Delivery Order", delivery_order_name):
+        frappe.local.response.http_status_code = 404
+        return {"error": "Not found"}
+
+    delivery_order = frappe.get_doc(
+        "Delivery Order",
+        delivery_order_name
+    )
+
+    return {
+        "status": delivery_order.status,
+        "zone": delivery_order.delivery_zone,
+        "attempts_count": delivery_order.delivery_attempts_count
+    }
+
